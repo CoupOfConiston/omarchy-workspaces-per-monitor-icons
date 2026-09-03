@@ -29,6 +29,7 @@ BarWidget {
   readonly property bool deduplicateIcons: boolSetting("deduplicateIcons", false)
   readonly property int iconSpacing: intSetting("iconSpacing", 4)
   readonly property int maxIconsPerWorkspace: intSetting("maxIconsPerWorkspace", 0)
+  readonly property int pillMarginY: intSetting("pillMarginY", 6)
 
   // Only shows workspaces assigned to the screen this bar is rendered on
   readonly property var workspaceIds: {
@@ -359,18 +360,20 @@ BarWidget {
 
           property bool hovered: false
 
-          radius: Style.spaceReal(8)
+          radius: Style.spaceReal(6)
           color: btn.urgent ? root.urgentColor : (btn.focused ? Util.alpha(root.fgColor, 0.22) :
                  (btn.hovered ? Util.alpha(root.fgColor, 0.12) : "transparent"))
 
           opacity: (btn.occupied || btn.focused) ? 1.0 : 0.5
 
           Layout.alignment: Qt.AlignVCenter
-          Layout.fillHeight: true
+          Layout.fillHeight: false
           Layout.fillWidth: root.vertical
+          Layout.preferredWidth: implicitWidth
+          Layout.preferredHeight: implicitHeight
 
           implicitWidth: root.vertical ? root.barSize : Math.max(Style.spaceReal(22), content.implicitWidth + Style.spaceReal(14))
-          implicitHeight: root.vertical ? Math.max(Style.spaceReal(24), content.implicitHeight + Style.spaceReal(8)) : root.barSize
+          implicitHeight: root.vertical ? Math.max(Style.spaceReal(24), content.implicitHeight + Style.spaceReal(8)) : Math.max(Style.spaceReal(16), root.barSize - Style.spaceReal(root.pillMarginY * 2))
 
           Row {
             id: content

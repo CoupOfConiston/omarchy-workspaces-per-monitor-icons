@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "simon.workspaces-per-monitor",
   "name": "Workspaces (per monitor + icons)",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Simon",
   "description": "Show only the workspaces belonging to each monitor, with per-app icons for open windows",
   "license": "MIT",
@@ -23,7 +23,8 @@
       "showNumberAlways": true,
       "deduplicateIcons": false,
       "iconSpacing": 4,
-      "maxIconsPerWorkspace": 0
+      "maxIconsPerWorkspace": 0,
+      "pillMarginY": 6
     },
     "schema": [
       {
@@ -64,6 +65,15 @@
         "max": 10,
         "step": 1,
         "defaultValue": 0
+      },
+      {
+        "key": "pillMarginY",
+        "type": "integer",
+        "label": "Vertical space above and below the pill (px)",
+        "min": 0,
+        "max": 14,
+        "step": 1,
+        "defaultValue": 6
       }
     ]
   },
