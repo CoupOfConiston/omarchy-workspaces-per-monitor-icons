@@ -1,6 +1,26 @@
 [
   {
-    "pattern": "org.omarchy.terminal|omarchy",
+    "pattern": "notion\\.so|notion",
+    "icon": "\udb81\udf9a"
+  },
+  {
+    "pattern": "google.?drive|drive\\.google",
+    "icon": "\udb80\ude4b"
+  },
+  {
+    "pattern": "google.?calendar|calendar\\.google",
+    "icon": "\udb80\udced"
+  },
+  {
+    "pattern": "google.?docs|docs\\.google",
+    "icon": "\udb80\ude19"
+  },
+  {
+    "pattern": "google.?sheets|sheets\\.google",
+    "icon": "\udb81\udef7"
+  },
+  {
+    "pattern": "^org\\.omarchy\\.terminal$|^omarchy-terminal$",
     "icon": "\udb80\udd8d"
   },
   {

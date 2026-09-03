@@ -30,6 +30,39 @@ BarWidget {
   readonly property int iconSpacing: intSetting("iconSpacing", 4)
   readonly property int maxIconsPerWorkspace: intSetting("maxIconsPerWorkspace", 0)
   readonly property int pillMarginY: intSetting("pillMarginY", 6)
+  readonly property bool browserTabIcons: boolSetting("browserTabIcons", false)
+
+  // Standard multi-tab browser classes that should never have their icon
+  // hijacked by whatever web page / tab title happens to be active.
+  readonly property var standardBrowserClasses: [
+    "chromium",
+    "google-chrome",
+    "google-chrome-stable",
+    "brave-browser",
+    "brave",
+    "firefox",
+    "org.mozilla.firefox",
+    "librewolf",
+    "zen",
+    "zen-browser",
+    "waterfox",
+    "microsoft-edge",
+    "opera",
+    "vivaldi",
+    "vivaldi-stable"
+  ]
+
+  function isStandardBrowser(cls) {
+    if (!cls) return false
+    return standardBrowserClasses.indexOf(String(cls).toLowerCase()) !== -1
+  }
+
+  function isWebApp(cls) {
+    if (!cls) return false
+    var lower = String(cls).toLowerCase()
+    return lower.indexOf("chrome-") === 0 || lower.indexOf("chromium-") === 0 ||
+           lower.indexOf("app-id-") === 0 || lower.indexOf("webapp-") === 0
+  }
 
   // Only shows workspaces assigned to the screen this bar is rendered on
   readonly property var workspaceIds: {
@@ -191,13 +224,46 @@ BarWidget {
   }
 
   function resolveIcon(cls, title) {
+    var rawCls = String(cls || "")
+    var rawTitle = String(title || "")
+    var lowerCls = rawCls.toLowerCase()
+    var lowerTitle = rawTitle.toLowerCase()
+
+    if (lowerTitle.length > root.maxMatchInputLength) lowerTitle = lowerTitle.substring(0, root.maxMatchInputLength)
+    if (lowerCls.length > root.maxMatchInputLength) lowerCls = lowerCls.substring(0, root.maxMatchInputLength)
+
     var rules = root.compiledRules
-    if (title.length > root.maxMatchInputLength) title = title.substring(0, root.maxMatchInputLength)
-    if (cls.length > root.maxMatchInputLength) cls = cls.substring(0, root.maxMatchInputLength)
-    for (var i = 0; i < rules.length; i++) {
-      if (rules[i].re.test(title)) return rules[i].icon
-      if (rules[i].re.test(cls)) return rules[i].icon
+
+    // 1. Standard multi-tab browser windows (Chromium, Firefox, Brave, etc.)
+    // Keep fixed browser icon on all tabs unless browserTabIcons is explicitly enabled.
+    if (!root.browserTabIcons && root.isStandardBrowser(lowerCls)) {
+      for (var i = 0; i < rules.length; i++) {
+        if (rules[i].re.test(lowerCls)) return rules[i].icon
+      }
+      return root.defaultIcon
     }
+
+    // 2. Web Apps (PWAs / standalone webapp windows created with omarchy-launch-webapp or "Install as app")
+    // Match the website domain/class first, then match title against website rules.
+    if (root.isWebApp(lowerCls)) {
+      for (var i = 0; i < rules.length; i++) {
+        if (rules[i].re.test(lowerCls)) return rules[i].icon
+      }
+      for (var i = 0; i < rules.length; i++) {
+        if (rules[i].re.test(lowerTitle)) return rules[i].icon
+      }
+      return "󰖟" // Clean web/globe icon fallback for unlisted webapps
+    }
+
+    // 3. Regular native desktop applications
+    // Match window class first so titles containing words like "terminal" or "code" do not hijack the app icon
+    for (var i = 0; i < rules.length; i++) {
+      if (rules[i].re.test(lowerCls)) return rules[i].icon
+    }
+    for (var i = 0; i < rules.length; i++) {
+      if (rules[i].re.test(lowerTitle)) return rules[i].icon
+    }
+
     return root.defaultIcon
   }
 
