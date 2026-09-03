@@ -53,7 +53,7 @@ omarchy restart shell
 ### From Git (once pushed to GitHub)
 
 ```bash
-omarchy plugin add https://github.com/<your-user>/<repo-name>.git --enable
+omarchy plugin add https://github.com/CoupOfConiston/omarchy-workspaces-per-monitor-icons.git --enable
 ```
 
 ## Configuration
